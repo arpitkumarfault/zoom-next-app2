@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState, useCallback } from 'react';
 import Loader from './Loader';
 import MeetingCard from './MeetingCard';
@@ -13,7 +15,9 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
   const fetchRecordings = useCallback(async () => {
     setIsFetchingRecordings(true);
     try {
-      const callData = await Promise.all(callRecordings?.map((meeting) => meeting.queryRecordings()));
+      const callData = await Promise.all(
+        callRecordings?.map((meeting) => meeting.queryRecordings())
+      );
       const recordings = callData
         .filter((call) => call.recordings.length > 0)
         .flatMap((call) => call.recordings);
