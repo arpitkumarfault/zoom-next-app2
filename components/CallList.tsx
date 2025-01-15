@@ -1,10 +1,8 @@
-'use client'
-import { useGetCalls } from '@/hooks/useGetCall'
-import { Call, CallRecording } from '@stream-io/video-react-sdk'
-import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
-import MeetingCard from './MeetingCard'
-import Loader from './Loader'
+import React, { useEffect, useState, useCallback } from 'react';
+import Loader from './Loader';
+import MeetingCard from './MeetingCard';
+import { useRouter } from 'next/navigation';
+import { useGetCalls } from '@/hooks/useGetCall';
 
 const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
   const { endedCalls, upcomingCalls, callRecordings, isLoading } = useGetCalls();
@@ -12,7 +10,7 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
   const [recordings, setRecordings] = useState<CallRecording[]>([]);
   const [isFetchingRecordings, setIsFetchingRecordings] = useState(false);
 
-  const fetchRecordings = async () => {
+  const fetchRecordings = useCallback(async () => {
     setIsFetchingRecordings(true);
     try {
       const callData = await Promise.all(callRecordings?.map((meeting) => meeting.queryRecordings()));
@@ -25,11 +23,11 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
     } finally {
       setIsFetchingRecordings(false);
     }
-  };
+  }, [callRecordings]);
 
   useEffect(() => {
     if (type === 'recordings') fetchRecordings();
-  }, [type, callRecordings]);
+  }, [type, fetchRecordings]);
 
   const getCalls = (): Call[] | CallRecording[] => {
     switch (type) {
@@ -52,7 +50,7 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
   }[type];
 
   if (isLoading || (type === 'recordings' && isFetchingRecordings)) return <Loader />;
-  
+
   return (
     <div className="grid grid-cols-1 gap-5 xl:grid-cols-2">
       {calls.length > 0 ? (
@@ -84,5 +82,4 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
   );
 };
 
-
-export default CallList
+export default CallList;
