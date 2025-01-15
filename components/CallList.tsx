@@ -1,10 +1,15 @@
-"use client";
-
 import React, { useEffect, useState, useCallback } from 'react';
 import Loader from './Loader';
 import MeetingCard from './MeetingCard';
 import { useRouter } from 'next/navigation';
 import { useGetCalls } from '@/hooks/useGetCall';
+
+// Define CallRecording type if it's not defined
+interface CallRecording {
+  id: string;
+  recordings: { url: string; timestamp: string }[]; // Adjust based on your data
+  queryRecordings: () => Promise<{ recordings: { url: string; timestamp: string }[] }>;
+}
 
 const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
   const { endedCalls, upcomingCalls, callRecordings, isLoading } = useGetCalls();
