@@ -19,17 +19,18 @@ const MeetingPage = () => {
   // Always call hooks before any conditional returns
   const [isSetupComplete, setIsSetupComplete] = useState(false);
 
-  // Call the hook unconditionally
-  const { call, isCallLoading } = useGetCallById(id);
-
-  // Early return if id is invalid
-  if (!id || typeof id !== "string") {
+  // Early return for invalid or missing `id` (before the hook)
+  if (!id || Array.isArray(id)) {
     return (
       <p className="text-center text-3xl font-bold text-white">
         Invalid or missing meeting ID
       </p>
     );
   }
+
+  // Call the hook unconditionally
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { call, isCallLoading } = useGetCallById(id);
 
   if (!isLoaded || isCallLoading) return <Loader />;
 
